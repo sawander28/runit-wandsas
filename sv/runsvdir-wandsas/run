@@ -1,0 +1,17 @@
+#!/bin/sh
+
+id="$(id -u wandsas)"
+rundir="/run/user/$id"
+svdir="/home/$id/service"
+
+[ ! -d "$rundir" ] && \
+  mkdir -p "$rundir" && \
+  mount -t tmpfs tmpfs -o mode=0700,uid="$id",gid="$id",size="12m" "$rundir"
+
+groups=$(id -Gn wandsas | tr ' ' ':')
+
+exec 2>&1
+# exec chpst -u "wandsas:$groups" runsvdir "$svdir"
+# -l make dash behave like a login shell
+# -c read command from the command string operand instead of standard input
+exec chpst -u "wandsas:$groups" sh -l -c "exec runsvdir /home/wandsas/service 'log: ...........................................................................................................................................................................................................................................................................................................................................................................................................'" wandsas
